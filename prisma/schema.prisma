@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  firstname String   @db.VarChar(255)
+  lastname  String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  email     String   @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  photo     String   @default("../img/defaultImg.jpeg") @db.VarChar(255)
+  folders   Folder[]
+}
+
+model Snippet {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  language  String   @db.VarChar(255)
+  content   String   @db.Text()
+  folder    Folder   @relation(fields: [folder_id], references: [id])
+  folder_id Int
+}
+
+model Folder {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [user_id], references: [id])
+  user_id   Int
+  snippets  Snippet[]
+}
